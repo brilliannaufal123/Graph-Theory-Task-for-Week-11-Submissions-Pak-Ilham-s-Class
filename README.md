@@ -228,7 +228,6 @@ void runWelshPowell(const vector<vector<int>>& adj, int numNodes) {
 }
 
 // --- Hungarian Algorithm Implementation ---
-
 const long long INF = numeric_limits<long long>::max();
 
 // DFS helper to find augmenting path (Min-Cost)
@@ -242,10 +241,9 @@ bool dfs_hungarian(int u, const vector<vector<long long>>& cost, int N,
     for (int v = 0; v < N; ++v) {
         if (visited_v[v]) continue;
         
-        // **FIX 2: Changed delta calculation for Min-Cost**
         long long delta = cost[u][v] - lx[u] - ly[v];
         
-        if (delta == 0) { // Edge (u,v) is in the equality subgraph
+        if (delta == 0) { 
             visited_v[v] = true;
             if (match[v] == -1 || dfs_hungarian(match[v], cost, N, lx, ly, match, slack, visited_u, visited_v)) {
                 match[v] = u;
@@ -268,7 +266,6 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
     }
 
     vector<long long> lx(N, INF), ly(N, 0);
-    // match[v] = u (server v is paired with job u)
     vector<int> match(N, -1);
     
     for (int i = 0; i < N; ++i) {
@@ -277,11 +274,11 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
                 lx[i] = min(lx[i], cost[i][j]);
             }
         }
-        // Handle rows with no edges (all INF)
+       
         if (lx[i] == INF) lx[i] = 0; 
     }
     
-    for (int u = 0; u < N; ++u)
+    for (int u = 0; u < N; ++u) { 
         vector<long long> slack(N, INF);
         while (true) {
             vector<bool> visited_u(N, false);
@@ -290,7 +287,7 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
             if (dfs_hungarian(u, cost, N, lx, ly, match, slack, visited_u, visited_v)) {
                 break;
             } else {
-                // Update potentials (labels)
+                
                 long long delta = INF;
                 for (int v = 0; v < N; ++v) {
                     if (!visited_v[v]) {
@@ -304,7 +301,7 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
                 for (int j = 0; j < N; ++j) {
                     if (visited_v[j]) ly[j] -= delta;
                 }
-                // Slack update remains the same logic (slack_new = slack_old - delta)
+              
                 for (int v = 0; v < N; v++) {
                     if (!visited_v[v]) {
                         slack[v] -= delta;
@@ -322,13 +319,11 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
     for (int v = 0; v < N; ++v) {
         if (match[v] != -1) {
             int u = match[v];
-            assignments[u] = {u, v}; // Store (job, server)
+            assignments[u] = {u, v}; 
         }
     }
 
     for(int u = 0; u < N; ++u) {
-        // Handle cases where a job might not be assigned (if N != M)
-        // Although in this N=M code, it should always be assigned
         if (assignments[u].first == u) {
              int v = assignments[u].second;
              if (cost[u][v] == INF) {
@@ -338,8 +333,8 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
                   totalCost += cost[u][v];
              }
         } else {
-            // This case shouldn't happen in a square matrix, but good to have
-             cout << "  Job " << u << " -> NOT ASSIGNED" << endl;
+             // This case shouldn't happen in a square matrix, but good to have
+              cout << "  Job " << u << " -> NOT ASSIGNED" << endl;
         }
     }
     
@@ -404,5 +399,4 @@ int main() {
     }
     
     return 0;
-}
 ```
