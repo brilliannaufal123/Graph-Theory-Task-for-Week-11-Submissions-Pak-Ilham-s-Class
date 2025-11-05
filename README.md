@@ -161,13 +161,10 @@ Total Minimum Cost: 5
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <limits> // For infinity
-
-// Using the std namespace
+#include <limits>
 using namespace std;
 
 // --- Welsh-Powell Algorithm Implementation ---
-// (No changes here, code is the same as before)
 struct NodeDegree {
     int id;
     int degree;
@@ -270,12 +267,10 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
         return;
     }
 
-    // Potentials/labels
     vector<long long> lx(N, INF), ly(N, 0);
     // match[v] = u (server v is paired with job u)
     vector<int> match(N, -1);
     
-    // **FIX 1: Initialize lx potentials for Min-Cost**
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             if (cost[i][j] != INF) {
@@ -286,7 +281,7 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
         if (lx[i] == INF) lx[i] = 0; 
     }
     
-    for (int u = 0; u < N; ++u) { // For each job u
+    for (int u = 0; u < N; ++u)
         vector<long long> slack(N, INF);
         while (true) {
             vector<bool> visited_u(N, false);
@@ -303,7 +298,6 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
                     }
                 }
                 
-                // **FIX 3: Changed potential update signs for Min-Cost**
                 for (int i = 0; i < N; ++i) {
                     if (visited_u[i]) lx[i] += delta;
                 }
@@ -353,9 +347,6 @@ void runHungarian(const vector<vector<long long>>& cost, int N) {
     cout << "--------------------------------------------------\n";
 }
 
-
-// --- Main Program ---
-// (No changes here, code is the same as before)
 int main() {
     int choice;
     cout << "===========================================" << endl;
